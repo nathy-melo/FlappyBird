@@ -5,7 +5,8 @@ sprites.src = "./sprites.png";
 const canvas = document.querySelector("#game-canvas");
 const contexto = canvas.getContext("2d");
 
-// Programar os objetos
+contexto.fillStyle = "#70c5ce";
+
 const inicio = {
     spriteX: 130,
     spriteY: 0,
@@ -13,15 +14,14 @@ const inicio = {
     altura: 152,
     x: 70,
     y: 70,
-        desenha(){
+        desenha(){      
             contexto.drawImage(
                 sprites,
                 inicio.spriteX, inicio.spriteY,
                 inicio.largura, inicio.altura,
                 inicio.x, inicio.y,
                 inicio.largura, inicio.altura,
-            );
-
+                );
         }
 }
 
@@ -58,6 +58,8 @@ const cidade = {
     x: 0,
     y: 280,
         desenha(){
+            contexto.fillRect(0, 0, canvas.width, canvas.height);
+
             contexto.drawImage(
                 sprites,
                 cidade.spriteX, cidade.spriteY,
@@ -75,6 +77,8 @@ const cidade = {
 
         }
 };
+
+
 
 const chao = {
     spriteX: 0,
@@ -101,6 +105,8 @@ const chao = {
 
         }
 };
+
+
 
 //Clica pra iniciar
 const TelaInicio = {
@@ -133,8 +139,7 @@ function mudaTelaAtiva(){
 window.addEventListener("click", mudaTelaAtiva);
 
 function loop(){
-    contexto.fillStyle = "#70c5ce";
-    contexto.fillRect(0, 0, canvas.width, canvas.height);
+    telaAtiva.desenha();
     requestAnimationFrame(loop);
 };
 
