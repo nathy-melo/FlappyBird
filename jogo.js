@@ -1,10 +1,13 @@
 // Aqui teremos a programação do Flappy Bird :D
 const sprites = new Image();
 sprites.src = "./sprites.png";
-
+const som_punch = new Audio();
+som_punch.src = "./som/punch.wav";
 const canvas = document.querySelector("#game-canvas");
 const contexto = canvas.getContext("2d");
 
+
+//Objetos do cenário
 contexto.fillStyle = "#70c5ce";
 
 const inicio = {
@@ -22,8 +25,8 @@ const inicio = {
                 inicio.x, inicio.y,
                 inicio.largura, inicio.altura,
                 );
-        }
-}
+        },
+};
 
 const flappyBird = {
     spriteX: 0,
@@ -34,6 +37,10 @@ const flappyBird = {
     y: 50,
     gravidade: 0.25,
     velocidade: 0,
+    pulo: 4.6,
+        pula(){
+            flappyBird.velocidade = -flappyBird.pulo;
+        },
         desenha(){
             contexto.drawImage(
                 sprites,
@@ -43,12 +50,16 @@ const flappyBird = {
                 flappyBird.largura, flappyBird.altura,
             );
         },
-        atualiza(){    
-        flappyBird.velocidade += flappyBird.gravidade;
-        flappyBird.y = flappyBird.y + flappyBird.velocidade;
-        }
-    
-}
+        atualiza(){  
+            if (fazColisao()){
+                som_punch.play();
+                telaAtiva = TelaInicio;
+                return;
+            };
+            flappyBird.velocidade += flappyBird.gravidade;
+            flappyBird.y = flappyBird.y + flappyBird.velocidade;
+        },
+};
 
 const cidade = {
     spriteX: 390,
@@ -75,10 +86,8 @@ const cidade = {
                 cidade.largura, cidade.altura,
             );
 
-        }
+        },
 };
-
-
 
 const chao = {
     spriteX: 0,
@@ -103,12 +112,12 @@ const chao = {
                 chao.largura, chao.altura,
             );
 
-        }
+        },
 };
 
 
 
-//Clica pra iniciar
+//Funções de mecher
 const TelaInicio = {
     desenha (){
         cidade.desenha();
@@ -118,8 +127,8 @@ const TelaInicio = {
     },
     click(){
         telaAtiva = TelaJogo;
-    }
-}
+    },
+};
 
 const TelaJogo = {
     desenha(){
@@ -128,15 +137,23 @@ const TelaJogo = {
         flappyBird.desenha();
         flappyBird.atualiza();
     },
-    click(){}
-}
+    click(){
+        flappyBird.pula();
+    },
+};
 
 var telaAtiva = TelaInicio;
 
 function mudaTelaAtiva(){
     telaAtiva.click();
-}
+};
 window.addEventListener("click", mudaTelaAtiva);
+
+function fazColisao(){
+    if(flappyBird.y + flappyBird.altura >= chao.y || flappyBird.y <= 0){
+        return true; 
+    } else {return false;} 
+};
 
 function loop(){
     telaAtiva.desenha();
