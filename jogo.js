@@ -5,6 +5,8 @@ const som_punch = new Audio();
 som_punch.src = "./som/punch.wav";
 const canvas = document.querySelector("#game-canvas");
 const contexto = canvas.getContext("2d");
+let animation_frame = 0;
+
 
 
 //Objetos do cenário
@@ -38,6 +40,13 @@ const flappyBird = {
     gravidade: 0.25,
     velocidade: 0,
     pulo: 4.6,
+    frameAtual: 0,
+    movimentos: [
+        {spriteX: 0, spriteY: 0}, // asa para cima
+        {spriteX: 0, spriteY: 26}, // asa no meio
+        {spriteX: 0, spriteY: 52}, // asa para baixo
+        {spriteX: 0, spriteY: 26}, // asa no meio
+        ],
         pula(){
             flappyBird.velocidade = -flappyBird.pulo;
         },
@@ -50,6 +59,14 @@ const flappyBird = {
                 flappyBird.largura, flappyBird.altura,
             );
         },
+        atualizaFRAME(){
+            if((animation_frame % 10) === 0){
+                flappyBird.frameAtual = flappyBird.frameAtual + 1;
+                flappyBird.frameAtual = flappyBird.frameAtual % flappyBird.movimentos.length;
+                flappyBird.spriteX = flappyBird.movimentos[flappyBird.frameAtual].spriteX;
+                flappyBird.spriteY = flappyBird.movimentos[flappyBird.frameAtual].spriteY;
+            };
+        },
         atualiza(){  
             if (fazColisao()){
                 som_punch.play();
@@ -58,6 +75,7 @@ const flappyBird = {
             };
             flappyBird.velocidade += flappyBird.gravidade;
             flappyBird.y = flappyBird.y + flappyBird.velocidade;
+            flappyBird.atualizaFRAME();
         },
 };
 
@@ -71,6 +89,7 @@ const cidade = {
         desenha(){
             contexto.fillRect(0, 0, canvas.width, canvas.height);
 
+
             contexto.drawImage(
                 sprites,
                 cidade.spriteX, cidade.spriteY,
@@ -82,11 +101,21 @@ const cidade = {
                 sprites,
                 cidade.spriteX, cidade.spriteY,
                 cidade.largura, cidade.altura,
-                cidade.x+cidade.largura, cidade.y,
+                cidade.x + cidade.largura, cidade.y,
                 cidade.largura, cidade.altura,
             );
-
+            contexto.drawImage(
+                sprites,
+                cidade.spriteX, cidade.spriteY,
+                cidade.largura, cidade.altura,
+                cidade.x + (cidade.largura * 2), cidade.y,
+                cidade.largura, cidade.altura,
+            );
         },
+        atualiza(){
+            cidade.x = cidade.x - 0.5;
+            cidade.x = cidade.x % (cidade.largura);
+        }
 };
 
 const chao = {
@@ -108,11 +137,14 @@ const chao = {
                 sprites,
                 chao.spriteX, chao.spriteY,
                 chao.largura, chao.altura,
-                chao.x+chao.largura, chao.y,
+                chao.x + chao.largura, chao.y,
                 chao.largura, chao.altura,
             );
-
         },
+        atualiza(){
+            chao.x = chao.x - 2;
+            chao.x = chao.x % (chao.largura / 2);
+        }
 };
 
 
@@ -133,7 +165,9 @@ const TelaInicio = {
 const TelaJogo = {
     desenha(){
         cidade.desenha();
+        cidade.atualiza();
         chao.desenha();
+        chao.atualiza();
         flappyBird.desenha();
         flappyBird.atualiza();
     },
@@ -150,14 +184,15 @@ function mudaTelaAtiva(){
 window.addEventListener("click", mudaTelaAtiva);
 
 function fazColisao(){
-    if(flappyBird.y + flappyBird.altura >= chao.y || flappyBird.y <= 0){
+    if(flappyBird.y + flappyBird.altura >= chao.y){
         return true; 
-    } else {return false;} 
+    } else {return false}; 
 };
 
 function loop(){
     telaAtiva.desenha();
     requestAnimationFrame(loop);
+    animaton_frame = animaton_frame + 1;
 };
 
 loop();
