@@ -41,6 +41,7 @@ const flappyBird = {
     velocidade: 0,
     pulo: 4.6,
     frameAtual: 0,
+    rotacao: 0,
     movimentos: [
         {spriteX: 0, spriteY: 0}, // asa para cima
         {spriteX: 0, spriteY: 26}, // asa no meio
@@ -48,10 +49,10 @@ const flappyBird = {
         {spriteX: 0, spriteY: 26}, // asa no meio
         ],
         pula(){
-            flappyBird.velocidade = -flappyBird.pulo;
+            flappyBird.velocidade = - flappyBird.pulo;
         },
         desenha(){
-            contexto.drawImage(
+            contexto.drawImage( 
                 sprites,
                 flappyBird.spriteX, flappyBird.spriteY,
                 flappyBird.largura, flappyBird.altura,
@@ -67,7 +68,7 @@ const flappyBird = {
                 flappyBird.spriteY = flappyBird.movimentos[flappyBird.frameAtual].spriteY;
             };
         },
-        atualiza(){  
+        atualiza(){
             if (fazColisao()){
                 som_punch.play();
                 telaAtiva = TelaInicio;
