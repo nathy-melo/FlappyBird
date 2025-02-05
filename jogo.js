@@ -148,7 +148,67 @@ const chao = {
         }
 };
 
+const canos = {
+    largura: 52,
+    altura: 400,
+    ceu: {
+        spriteX: 52,
+        spriteY: 169,
+        x: 120,
+        y: -150,
+    },
+    chao: {
+        spriteX: 0,
+        spriteY: 169,
+    },
+    pares: [],
+    desenha(){
+        for(i = 0 ; i < canos.pares.length; i++){
+            canos.ceu.x = canos.pares[i].x;
+            canos.ceu.y = canos.pares[i].y;
+            const espacoentreCanos = 80;
+            //Canos no céu
+            contexto.drawImage(
+                sprites,
+                canos.ceu.spriteX, canos.ceu.spriteY,
+                canos.largura, canos.altura,
+                canos.ceu.x, canos.ceu.y,
+                canos.largura, canos.altura,
+            );
+            // Canos no chão
+            const canoChaoX = canos.ceu.x;
+            const canoChaoY = canos.altura + espacoentreCanos + canos.ceu.y;
+            contexto.drawImage(
+                sprites,
+                canos.chao.spriteX, canos.chao.spriteY,
+                canos.largura, canos.altura,
+                canoChaoX, canoChaoY,
+                canos.largura, canos.altura,
+            );
+        };
+    },
+    atualiza(){
+        const passou100Frames = (animation_frame % 100 === 0);
+        
+        for(i = 0; i < canos.pares.length; i++){
+            const par = canos.pares[i];
+            par.x = par.x - 2;
 
+            if(passou100Frames){
+                const novoPar = {
+                    x: canvas.width,
+                    y: -150,
+                };
+                canos.pares.push(novoPar);
+            };
+           
+            if(par.x + canos.largura <= 0){
+                canos.pares.shift();
+            };
+            console.log(canos.pares.length) 
+        };
+    },
+};
 
 //Funções de mecher
 const TelaInicio = {
@@ -167,10 +227,13 @@ const TelaJogo = {
     desenha(){
         cidade.desenha();
         cidade.atualiza();
+        canos.desenha();
+        canos.atualiza();
         chao.desenha();
         chao.atualiza();
         flappyBird.desenha();
         flappyBird.atualiza();
+        
     },
     click(){
         flappyBird.pula();
@@ -193,7 +256,7 @@ function fazColisao(){
 function loop(){
     telaAtiva.desenha();
     requestAnimationFrame(loop);
-    animaton_frame = animaton_frame + 1;
+    animation_frame = animation_frame + 1;
 };
 
 loop();
