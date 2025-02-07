@@ -203,7 +203,7 @@ const canos = {
             if(par.x + canos.largura <= 0){
                 canos.pares.shift();
             };
-            
+
             if (fazColisaoOBSTACULO(par)){
                 som_punch.play();
                 telaAtiva = TelaInicio;
@@ -213,22 +213,6 @@ const canos = {
     },
 };
 
-
-function fazColisaoOBSTACULO(par){
-    if(flappyBird.x >= par.x){
-        const alturaCabeça = flappyBird.y;
-        const alturaPe = flappyBird.y + flappyBird.altura;
-        const canoInicioCEUY = par.y + canos.altura;
-        const canoInicioCHAOY = par.y + canos.altura + canos.espacoentreCanos;
-        if(alturaCabeça <= canoInicioCEUY){
-            return true;
-        };
-        if(alturaCabeça >= canoInicioCHAOY){
-            return true;
-        };  
-    };
-    return false;
-}
 //Funções de mecher
 const TelaInicio = {
     desenha (){
@@ -265,10 +249,27 @@ function mudaTelaAtiva(){
 };
 window.addEventListener("click", mudaTelaAtiva);
 
+function fazColisaoOBSTACULO(par){
+    if(flappyBird.x >= par.x){
+        const alturaCabeça = flappyBird.y;
+        const alturaPe = flappyBird.y + flappyBird.altura;
+        const canoInicioCEUY = par.y + canos.altura;
+        const canoInicioCHAOY = par.y + canos.altura + canos.espacoentreCanos;
+        if(alturaCabeça <= canoInicioCEUY){
+            return true;
+        };
+        if(alturaCabeça >= canoInicioCHAOY){
+            return true;
+        };  
+    };
+    return false;
+};
+
 function fazColisao(){
     if(flappyBird.y + flappyBird.altura >= chao.y){
         return true; 
-    } else {return false}; 
+    } else {return false
+    }; 
 };
 
 function loop(){
