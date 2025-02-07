@@ -162,11 +162,11 @@ const canos = {
         spriteY: 169,
     },
     pares: [],
+    espacoentreCanos: 120,
     desenha(){
         for(i = 0 ; i < canos.pares.length; i++){
             canos.ceu.x = canos.pares[i].x;
-            canos.ceu.y = canos.pares[i].y;
-            const espacoentreCanos = 80;
+            canos.ceu.y = canos.pares[i].y
             //Canos no céu
             contexto.drawImage(
                 sprites,
@@ -177,7 +177,7 @@ const canos = {
             );
             // Canos no chão
             const canoChaoX = canos.ceu.x;
-            const canoChaoY = canos.altura + espacoentreCanos + canos.ceu.y;
+            const canoChaoY = canos.altura + canos.espacoentreCanos + canos.ceu.y;
             contexto.drawImage(
                 sprites,
                 canos.chao.spriteX, canos.chao.spriteY,
@@ -188,28 +188,47 @@ const canos = {
         };
     },
     atualiza(){
-        const passou100Frames = (animation_frame % 100 === 0);
-        
-        for(i = 0; i < canos.pares.length; i++){
+        const passou100FRAMES = (animation_frame % 100 === 0);
+        if(passou100FRAMES){
+            const novoPAR = {
+                x: canvas.width,
+                y: -150 * (Math.random() + 1),
+            }
+            canos.pares.push(novoPAR);
+        };
+        for(i = 0 ; i < canos.pares.length; i++){
             const par = canos.pares[i];
             par.x = par.x - 2;
 
-            if(passou100Frames){
-                const novoPar = {
-                    x: canvas.width,
-                    y: -150,
-                };
-                canos.pares.push(novoPar);
-            };
-           
             if(par.x + canos.largura <= 0){
                 canos.pares.shift();
             };
-            console.log(canos.pares.length) 
+            
+            if (fazColisaoOBSTACULO(par)){
+                som_punch.play();
+                telaAtiva = TelaInicio;
+                return;
+            };
         };
     },
 };
 
+
+function fazColisaoOBSTACULO(par){
+    if(flappyBird.x >= par.x){
+        const alturaCabeça = flappyBird.y;
+        const alturaPe = flappyBird.y + flappyBird.altura;
+        const canoInicioCEUY = par.y + canos.altura;
+        const canoInicioCHAOY = par.y + canos.altura + canos.espacoentreCanos;
+        if(alturaCabeça <= canoInicioCEUY){
+            return true;
+        };
+        if(alturaCabeça >= canoInicioCHAOY){
+            return true;
+        };  
+    };
+    return false;
+}
 //Funções de mecher
 const TelaInicio = {
     desenha (){
@@ -233,7 +252,6 @@ const TelaJogo = {
         chao.atualiza();
         flappyBird.desenha();
         flappyBird.atualiza();
-        
     },
     click(){
         flappyBird.pula();
