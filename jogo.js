@@ -8,9 +8,8 @@ const contexto = canvas.getContext("2d");
 let animation_frame = 0;
 
 
-
 //Objetos do cenário
-contexto.fillStyle = "#70c5ce";
+
 
 const inicio = {
     spriteX: 130,
@@ -28,6 +27,24 @@ const inicio = {
                 inicio.largura, inicio.altura,
                 );
         },
+};
+
+const placar = {
+    pontos: 0,
+    desenha(){
+        contexto.font = '35px "VT323"';
+        contexto.textAlign = 'right';
+        contexto.fillStyle = 'white';
+        contexto.fillText("Pontuação: " + placar.pontos, 25, 35);
+    },
+    atualiza(){
+        const intervaloFRAMES = 20;
+        const passouOIntervalo = animation_frame % intervaloFRAMES === 0;
+
+        if(passouOIntervalo){
+            placar.pontos = placar.pontos + 1;
+        };
+    },
 };
 
 const flappyBird = {
@@ -89,7 +106,6 @@ const cidade = {
     y: 280,
         desenha(){
             contexto.fillRect(0, 0, canvas.width, canvas.height);
-
 
             contexto.drawImage(
                 sprites,
@@ -213,42 +229,25 @@ const canos = {
     },
 };
 
-//Funções de mecher
-const TelaInicio = {
-    desenha (){
-        cidade.desenha();
-        chao.desenha();
-        flappyBird.desenha();
-        inicio.desenha();
-    },
-    click(){
-        telaAtiva = TelaJogo;
-    },
-};
-
-const TelaJogo = {
+const gameOVER = {
+    spriteX: 134,
+    spriteY: 153,
+    largura: 226,
+    altura: 200,
+    x: 50,
+    y: 70,
     desenha(){
-        cidade.desenha();
-        cidade.atualiza();
-        canos.desenha();
-        canos.atualiza();
-        chao.desenha();
-        chao.atualiza();
-        flappyBird.desenha();
-        flappyBird.atualiza();
-    },
-    click(){
-        flappyBird.pula();
-    },
-};
+        contexto.drawImage(
+            sprites,
+                gameOVER.spriteX, gameOVER.spriteY,
+                gameOVER.largura, gameOVER.altura,
+                gameOVER.x, gameOVER.y,
+                gameOVER.largura, gameOVER.altura,
+        )
+    }
+}
 
-var telaAtiva = TelaInicio;
-
-function mudaTelaAtiva(){
-    telaAtiva.click();
-};
-window.addEventListener("click", mudaTelaAtiva);
-
+//Funções de mexer
 function fazColisaoOBSTACULO(par){
     if(flappyBird.x >= par.x){
         const alturaCabeça = flappyBird.y;
@@ -272,8 +271,55 @@ function fazColisao(){
     }; 
 };
 
+const TelaInicio = {
+    desenha (){
+        cidade.desenha();
+        chao.desenha();
+        flappyBird.desenha();
+        inicio.desenha();
+    },
+    click(){
+        telaAtiva = TelaJogo;
+    },
+};
+
+var telaAtiva = TelaInicio;
+
+const TelaJogo = {
+    desenha(){
+        cidade.desenha();
+        cidade.atualiza();
+        canos.desenha();
+        canos.atualiza();
+        chao.desenha();
+        chao.atualiza();
+        flappyBird.desenha();
+        flappyBird.atualiza();
+        placar.desenha();
+        placar.atualiza();
+    },
+    click(){
+        flappyBird.pula();
+    },
+};
+
+const TelaGameOver = {
+    desenha(){
+        gameOVER.desenha();
+    },
+    click(){
+    },
+};
+
+function mudaTelaAtiva(){
+    telaAtiva.click();
+};
+
+window.addEventListener("click", mudaTelaAtiva);
+
 function loop(){
     telaAtiva.desenha();
+    contexto.fillStyle = "#70c5ce";
     requestAnimationFrame(loop);
     animation_frame = animation_frame + 1;
 };
